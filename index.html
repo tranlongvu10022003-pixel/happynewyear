@@ -130,7 +130,7 @@ canvas{
         clearInterval(timer);
         return;
       }
-    
+    showFireworks();
       const d = Math.floor(diff / 86400000);
       const h = Math.floor(diff / 3600000) % 24;
       const m = Math.floor(diff / 60000) % 60;
@@ -189,8 +189,70 @@ canvas{
     await syncTime();
     const timer = setInterval(tick,1000);
     </script>
-    
+    <canvas id="fireworks"></canvas>
+
+<script>
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+canvas.style.position = "fixed";
+canvas.style.top = 0;
+canvas.style.left = 0;
+canvas.style.pointerEvents = "none";
+canvas.style.zIndex = 999;
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+function random(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function showFireworks() {
+  for (let i = 0; i < 80; i++) {
+    setTimeout(() => {
+      const x = random(0, canvas.width);
+      const y = random(0, canvas.height / 2);
+      for (let j = 0; j < 50; j++) {
+        drawParticle(x, y);
+      }
+    }, i * 100);
+  }
+}
+
+function drawParticle(x, y) {
+  const angle = Math.random() * Math.PI * 2;
+  const speed = random(2, 6);
+  const vx = Math.cos(angle) * speed;
+  const vy = Math.sin(angle) * speed;
+  let alpha = 1;
+  const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+
+  const interval = setInterval(() => {
+    ctx.fillStyle = color;
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    x += vx;
+    y += vy;
+    alpha -= 0.02;
+
+    if (alpha <= 0) {
+      clearInterval(interval);
+    }
+  }, 16);
+}
+</script>
+
     
     
 </body>
 </html>
+
